@@ -1,0 +1,16 @@
+*.iml
+.gradle/
+local.properties
+/.idea/
+.DS_Store
+/build
+**/build/
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+*.ap_
+*.dex
+decoder-ffmpeg/src/main/jni/ffmpeg/
+.kotlin/
