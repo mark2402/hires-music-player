@@ -4,11 +4,7 @@ plugins {
 
 android {
     namespace = "androidx.media3.decoder.ffmpeg"
-    compileSdk {
-        version = release(37) {
-            minorApiLevel = 2
-        }
-    }
+    compileSdk = 36
     defaultConfig {
         minSdk = 26
         consumerProguardFiles("consumer-rules.pro")

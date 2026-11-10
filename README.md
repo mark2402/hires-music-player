@@ -66,14 +66,14 @@ The panel is labeled **Lossy · plays in YouTube Music**. Local files are labele
 ## Build
 
 - JDK 17 or newer (the project is built with JDK 21).
-- Android SDK platform **37.2**, build-tools **37.0.0**. `compileSdk` is 37.2 and `targetSdk` is 37. `minSdk` is 26.
+- Android SDK platform **36** (Android 16, stable). `compileSdk` and `targetSdk` are **36**. `minSdk` is 26. The first debug build targeted API 37 and was signed with scheme v2 only; sideload installers on phones such as MagicOS reject that. Use the release APK below.
 - Set `ANDROID_HOME` or `local.properties` `sdk.dir`.
 
 ```bash
-./gradlew :format-core:test assembleDebug
+./gradlew :format-core:test assembleRelease
 ```
 
-The debug APK is `app/build/outputs/apk/debug/app-debug.apk`.
+The sideload APK is `app/build/outputs/apk/release/app-release.apk`. It is signed with the committed keystore `app/keystore/hires-release.jks` (alias `hires`, store and key password `hires-sideload`) using APK Signature Schemes v1, v2, and v3. It is not debuggable, not `testOnly`, and not minified. All four ABIs are included. This keystore is for sideloading only, not a Play upload key.
 
 Unit tests live in `format-core` and do not need a device. They cover header probing (including FFmpeg-generated FLAC, ALAC, WAV, AIFF, MP3, AAC, Opus, and Vorbis fixtures), the Hi-Res / Lossless / Lossy rules, output planning, and YouTube Music search URLs.
 
