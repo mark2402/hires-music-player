@@ -65,6 +65,7 @@ class LibraryRepository(private val context: Context) {
     fun savedFolderCount(): Int = savedTrees().size
 
     fun addTree(uri: Uri) {
+        // Read-only. Never request write, and never delete or rename files in the tree.
         val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         runCatching { context.contentResolver.takePersistableUriPermission(uri, flags) }
         val next = savedTrees().map { it.toString() }.toMutableSet()

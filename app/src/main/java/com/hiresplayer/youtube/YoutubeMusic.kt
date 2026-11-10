@@ -21,8 +21,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
- * Reads and controls the YouTube Music media session. Audio keeps playing
- * inside YouTube Music; this class never opens a stream.
+ * Token Android requires before an app may call [MediaSessionManager.getActiveSessions].
+ * This service does not read notification text, titles, or other apps. Playback
+ * controls go through the YouTube Music media session only.
  */
 class YtmNotificationListener : NotificationListenerService()
 
@@ -119,6 +120,7 @@ class YtmCompanion(private val context: Context) {
     fun openApp() = YoutubeMusicIntents.openApp(appContext)
     fun search(query: String) = YoutubeMusicIntents.search(appContext, query)
     fun openListenerSettings() = YoutubeMusicIntents.openListenerSettings(appContext)
+    fun openAppInfo() = YoutubeMusicIntents.openAppInfo(appContext)
 
     fun release() {
         if (listening) {
@@ -221,6 +223,14 @@ object YoutubeMusicIntents {
     fun openListenerSettings(context: Context) {
         context.startActivity(
             Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+        )
+    }
+
+    fun openAppInfo(context: Context) {
+        val uri = Uri.fromParts("package", context.packageName, null)
+        context.startActivity(
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
         )
     }
 

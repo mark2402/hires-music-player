@@ -94,15 +94,10 @@ fun YoutubeMusicScreen(viewModel: YtmViewModel) {
                 onAction = viewModel::openApp,
             )
         }
-        if (!state.permissionGranted) {
-            InfoCard(
-                title = "Notification access",
-                body = "Android only exposes another app's playback session to a notification listener. Hires uses that access to find the YouTube Music session and to send play, pause, skip, and seek. It does not store or show notifications from other apps. The system permission itself can see notifications; grant it only if you want these controls.",
-                action = "Grant notification access",
-                onAction = viewModel::openSettings,
-            )
-        } else {
+        if (state.permissionGranted) {
             SessionCard(state.track, state.positionMs, viewModel)
+        } else {
+            OptionalNotificationAccess(viewModel)
         }
         OutlinedButton(onClick = viewModel::openApp, modifier = Modifier.fillMaxWidth()) {
             Text(if (state.appInstalled) "Open in YouTube Music" else "Open YouTube Music in the Play Store")
@@ -123,6 +118,48 @@ fun YoutubeMusicScreen(viewModel: YtmViewModel) {
             Text(if (state.appInstalled) "Search in YouTube Music" else "Search requires the app — open Play Store")
         }
         Spacer(Modifier.height(12.dp))
+    }
+}
+
+@Composable
+private fun OptionalNotificationAccess(viewModel: YtmViewModel) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(18.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Text("Optional. Your library still plays.", style = MaterialTheme.typography.titleMedium)
+        Text(
+            "Notification access is only for seeing and controlling YouTube Music " +
+                "(com.google.android.apps.youtube.music): play, pause, skip, and seek. " +
+                "Hires does not read notification text, SMS, banking apps, or other apps. " +
+                "Local files play on the Library tab with or without this.",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Text(
+            "On Honor and other Android 13+ phones, a sideloaded app is blocked until you allow a restricted setting. " +
+                "Hires cannot turn that on itself.",
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Text(
+            "1. Tap App info.\n" +
+                "2. Open the three-dot menu.\n" +
+                "3. Choose Allow restricted settings.\n" +
+                "4. Then turn on Notification access.\n\n" +
+                "You may need to try Notification access once before Allow restricted settings shows up. " +
+                "If the phone says access was denied, that is Android's gate for sideloaded apps. Your music files are unaffected.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        OutlinedButton(onClick = viewModel::openAppInfo, modifier = Modifier.fillMaxWidth()) {
+            Text("App info")
+        }
+        Button(onClick = viewModel::openSettings, modifier = Modifier.fillMaxWidth()) {
+            Text("Notification access")
+        }
     }
 }
 

@@ -34,6 +34,7 @@ class YtmViewModel(app: Application) : AndroidViewModel(app) {
     fun openApp() = companion.openApp()
     fun search(query: String) = companion.search(query)
     fun openSettings() = companion.openListenerSettings()
+    fun openAppInfo() = companion.openAppInfo()
 
     override fun onCleared() {
         companion.release()

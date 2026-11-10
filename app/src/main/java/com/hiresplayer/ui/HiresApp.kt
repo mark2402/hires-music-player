@@ -28,12 +28,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -207,6 +210,7 @@ private fun LibraryScreen(libraryVm: LibraryViewModel, onPlay: (List<Track>, Int
     var album by remember { mutableStateOf<AlbumGroup?>(null) }
     var artist by remember { mutableStateOf<ArtistGroup?>(null) }
     var folder by remember { mutableStateOf<FolderGroup?>(null) }
+    var showSafety by remember { mutableStateOf(false) }
     val permissions = remember {
         buildList {
             if (Build.VERSION.SDK_INT >= 33) {
@@ -247,9 +251,15 @@ private fun LibraryScreen(libraryVm: LibraryViewModel, onPlay: (List<Track>, Int
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            IconButton(onClick = { showSafety = true }) {
+                Icon(Icons.Filled.Info, contentDescription = "About and safety")
+            }
             IconButton(onClick = { folderLauncher.launch(null) }) {
                 Icon(Icons.Filled.Folder, contentDescription = "Add a folder")
             }
+        }
+        if (showSafety) {
+            SafetyNote(onClose = { showSafety = false })
         }
         androidx.compose.material3.OutlinedTextField(
             value = query,
@@ -317,6 +327,25 @@ private fun LibraryScreen(libraryVm: LibraryViewModel, onPlay: (List<Track>, Int
             }
         }
     }
+}
+
+@Composable
+private fun SafetyNote(onClose: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onClose,
+        confirmButton = { TextButton(onClick = onClose) { Text("Close") } },
+        title = { Text("About and safety") },
+        text = {
+            Text(
+                "Hires does not upload anything. This install has no internet permission.\n\n" +
+                    "Hires does not delete, rename, move, or change your music. " +
+                    "It only reads files the music library already lists, or a folder you pick.\n\n" +
+                    "Notification access is optional and only for controlling YouTube Music. " +
+                    "Your files play here without it.\n\n" +
+                    "Uninstalling Hires removes this app. It does not remove songs stored on the phone.",
+            )
+        },
+    )
 }
 
 @Composable

@@ -52,16 +52,20 @@ There is no DSD or MQA path. Multichannel files play when ExoPlayer and the devi
 
 ## YouTube Music companion
 
-YouTube Music has no public streaming API. Hires does not open its network streams, download audio, or parse its files.
+YouTube Music has no public streaming API. Hires does not open its network streams, download audio, or parse its files. Local playback does not need the YouTube Music tab or notification access.
 
 The YouTube Music tab:
 
-1. Explains that notification access is required because Android only reveals another app's media session to a notification listener, and links to that system setting. The listener is used to find `com.google.android.apps.youtube.music`. The system permission can see notifications in general; this app does not store or display other apps' notifications.
-2. Shows the active YouTube Music session (title, artist, art, play state) from `MediaSessionManager.getActiveSessions`.
-3. Sends play, pause, next, previous, and seek through that session's `MediaController`, and only enables a control when the session advertises the action.
+1. Treats notification access as optional. Without it, the library still plays. The tab explains that the permission is only used to see and control `com.google.android.apps.youtube.music` (play, pause, skip, seek). The app does not read notification text, SMS, banking apps, or other apps.
+2. On Honor and other Android 13+ phones, a sideloaded app is blocked by a restricted setting. Hires cannot bypass that. The screen tells the user to open App info, use the three-dot menu, choose **Allow restricted settings**, then enable Notification access. That menu item sometimes appears only after one denied attempt. Buttons open Hires' App info (`Settings.ACTION_APPLICATION_DETAILS_SETTINGS`) and the system notification-listener list.
+3. When access is allowed, shows the active YouTube Music session from `MediaSessionManager.getActiveSessions` and sends play, pause, next, previous, and seek through that session's `MediaController`.
 4. **Open in YouTube Music** launches the app. The search box opens `https://music.youtube.com/search?q=...` with the YouTube Music package. If the app is not installed, both actions open the Play Store (`market://details?id=com.google.android.apps.youtube.music`, then the web listing).
 
 The panel is labeled **Lossy · plays in YouTube Music**. Local files are labeled **Plays in this app**.
+
+## Your files stay put
+
+Hires has no `INTERNET` permission and does not upload audio. Library scans use MediaStore queries and read-only Storage Access Framework trees (`FLAG_GRANT_READ_URI_PERMISSION` only). The app does not request all-files access, and it does not delete, rename, move, or overwrite music files. Album art is read from the file or MediaStore. Uninstalling Hires removes the app and its private settings only. Backup, when enabled, stores the folder bookmark preference, not audio. The Library screen has an About and safety note with the same statement.
 
 ## Build
 
@@ -80,10 +84,10 @@ Unit tests live in `format-core` and do not need a device. They cover header pro
 ## Permissions
 
 - `READ_MEDIA_AUDIO` on Android 13+, or `READ_EXTERNAL_STORAGE` through Android 12, for the MediaStore library.
-- Storage Access Framework folder access, which does not need the storage permission. Tree URIs are persisted.
-- `POST_NOTIFICATIONS` so the media notification can be posted on Android 13+.
+- Storage Access Framework folder access, read-only. The tree grant is `FLAG_GRANT_READ_URI_PERMISSION` only.
+- `POST_NOTIFICATIONS` so the media notification can be posted on Android 13+. Playback continues if this is denied; the notification may be hidden.
 - `FOREGROUND_SERVICE` and `FOREGROUND_SERVICE_MEDIA_PLAYBACK` for background playback.
-- Notification listener access, requested in the YouTube Music screen, only for the companion controls.
+- Notification listener access is optional and only for the YouTube Music companion. Sideloaded copies on Android 13+ may need App info → Allow restricted settings before the toggle can be turned on.
 
 ## Layout
 

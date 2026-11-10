@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- App-private bookmarks only. Music files are never in this app's storage. -->
+<full-backup-content>
+    <include domain="sharedpref" path="library.xml" />
+</full-backup-content>
